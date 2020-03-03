@@ -3,8 +3,8 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://172.18.231.176:3306/appdb?characterEncoding=utf-8&allowMultiQueries=true
+    url: jdbc:mysql://localhost:3306/ironbox?characterEncoding=utf-8&allowMultiQueries=true
     username: root
-    password: root
+    password: 123
 mybatis:
   mapperLocations: classpath:mappers/*.xml

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bleeding.ironbox.dao.UserDao">
+    <select id="queryUserByAccount" resultType="java.util.Map" parameterType="java.lang.String">
+		select account, name, pwd from tb_user where account = #{account}
+	</select>
+    <select id="getUserList" resultType="java.util.Map" parameterType="java.util.Map">
+        select *
+        from tb_user
+        where 1=1
+        <if test="account neq null and account neq ''">
+            <!-- and account like concat("%",concat(#{account},"%")) -->
+            and concat(account, name, ifnull(sex, ''), ifnull(tel, ''), ifnull(email, ''))
+            like concat(concat('%', #{account}, '%'))
+        </if>
+    </select>
+    <select id="getUserById" resultType="java.util.Map" parameterType="java.lang.String">
+    	select id,account,name,sex,tel,email
+    	from tb_user
+    	where id=#{id}
+    </select>
+    <delete id="delUser" parameterType="java.lang.String">
+    	delete from tb_user where id in(${ids})
+    </delete>
+
+    <insert id="insertUser" parameterType="java.util.Map">
+    	insert tb_user(id,account,pwd,name,sex,tel,email) values(#{id},#{account},'12345678',#{name},#{sex},#{tel},#{email})
+    </insert>
+
+    <update id="updateUser" parameterType="java.util.Map">
+        update tb_user set account=#{account},name=#{name},sex=#{sex}
+        <if test="tel neq null and tel neq ''">
+            ,tel=#{tel}
+        </if>
+        <if test="email neq null and email neq ''">
+            ,email=#{email}
+        </if>
+        where id=#{id}
+    </update>
+</mapper>
