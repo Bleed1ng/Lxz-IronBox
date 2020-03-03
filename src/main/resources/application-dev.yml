@@ -1,5 +1,10 @@
 server:
   port: 8085
-
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://172.18.231.176:3306/appdb?characterEncoding=utf-8&allowMultiQueries=true
+    username: root
+    password: root
 mybatis:
   mapperLocations: classpath:mappers/*.xml
