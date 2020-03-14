@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bleeding.ironbox.dao.UserDao">
-    <select id="queryUserByAccount" resultType="java.util.Map" parameterType="java.lang.String">
-		select account, name, pwd from tb_user where account = #{account}
+    <select id="selectUserByUserId" resultType="java.util.Map" parameterType="java.lang.String">
+		select userId, userName, password from tb_user where userId = #{userId}
 	</select>
     <select id="getUserList" resultType="java.util.Map" parameterType="java.util.Map">
         select *

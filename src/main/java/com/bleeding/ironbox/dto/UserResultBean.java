@@ -3,7 +3,7 @@ package com.bleeding.ironbox.dto;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserListResultBean {
+public class UserResultBean {
 
     private boolean success = true;
     private String msg = "SUCCESS";

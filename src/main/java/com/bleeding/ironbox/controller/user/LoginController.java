@@ -2,22 +2,27 @@ package com.bleeding.ironbox.controller.user;
 
 import com.bleeding.ironbox.dto.UserResultBean;
 import com.bleeding.ironbox.service.user.IUserService;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
-@RequestMapping("/user")
+@RequestMapping("/")
 @RestController
-public class UserController {
-    @Resource
-    private UserResultBean userResultBean;
+public class LoginController {
     @Resource
     private IUserService userService;
 
-    @RequestMapping(value = "getUserList", method = RequestMethod.GET)
-    public UserResultBean getUserList(){
-        return userService.getUserList();
+    /**
+     * 登录验证
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "login", method = RequestMethod.POST)
+    public UserResultBean login(@RequestBody Map<String, String> params) {
+        return userService.login(params);
     }
 }
