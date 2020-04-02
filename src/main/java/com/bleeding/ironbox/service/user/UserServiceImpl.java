@@ -66,4 +66,9 @@ public class UserServiceImpl implements IUserService {
         }
         return userResultBean;
     }
+
+    @Override
+    public UserResultBean register(Map<String, String> params) {
+        return null;
+    }
 }

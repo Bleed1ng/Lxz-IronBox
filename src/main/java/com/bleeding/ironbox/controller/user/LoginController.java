@@ -25,4 +25,14 @@ public class LoginController {
     public UserResultBean login(@RequestBody Map<String, String> params) {
         return userService.login(params);
     }
+
+    /**
+     * 用户注册
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "register", method = RequestMethod.POST)
+    public UserResultBean register(@RequestBody Map<String, String> params) {
+        return userService.register(params);
+    }
 }

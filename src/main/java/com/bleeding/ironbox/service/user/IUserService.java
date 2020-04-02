@@ -9,4 +9,6 @@ public interface IUserService {
     UserResultBean getUserList();
 
     UserResultBean login(Map<String, String> params);
+
+    UserResultBean register(Map<String, String> params);
 }
