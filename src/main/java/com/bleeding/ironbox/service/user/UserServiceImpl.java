@@ -16,15 +16,87 @@ public class UserServiceImpl implements IUserService {
     @Resource
     private UserDao userDao;
 
+    /**
+     * 用户列表查询
+     *
+     * @return
+     */
     @Override
-    public UserResultBean getUserList() {
-        List<Map<String, Object>> userList = userDao.getUserList();
+    public UserResultBean getUserList(Map<String, String> params) {
+        List<Map<String, Object>> userList = userDao.getUserList(params);
         userResultBean.setResult(userList);
         return userResultBean;
     }
 
     /**
+     * 保存用户
+     *
+     * @param params
+     * @return
+     */
+    @Override
+    public UserResultBean saveUser(Map<String, String> params) {
+        UserResultBean result = new UserResultBean();
+        Map<String, String> user = params;
+        String userId = user.get("userId");
+        Integer num = new Integer(0);
+
+        if (userDao.getUserById(userId) == null) {
+            System.out.println("新增");
+            // 新增用户
+            num = userDao.insertUser(user);
+        } else {
+            System.out.println("更新");
+            // 更新用户
+            num = userDao.updateUser(user);
+        }
+
+        if (num != null && num > 0) {
+            result.setMsg("保存成功");
+        } else {
+            result.setSuccess(false);
+            result.setMsg("保存失败");
+        }
+        return result;
+    }
+
+    /**
+     * 根据ID查询单个用户
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public UserResultBean getUserById(String userId) {
+        UserResultBean result = new UserResultBean();
+        Map<String, Object> user = userDao.getUserById(userId);
+        result.setResult(user);
+        return result;
+    }
+
+    /**
+     * 删除用户
+     *
+     * @param paramMap
+     * @return
+     */
+    @Override
+    public UserResultBean deleteUser(Map<String, String> paramMap) {
+        String ids = paramMap.get("ids");
+        Integer num = userDao.deleteUser(ids);
+        UserResultBean result = new UserResultBean();
+        if (num != null && num > 0) {
+            result.setMsg("删除成功");
+        } else {
+            result.setSuccess(false);
+            result.setMsg("删除失败");
+        }
+        return result;
+    }
+
+    /**
      * 登录验证
+     *
      * @param params
      * @return
      */
@@ -67,6 +139,9 @@ public class UserServiceImpl implements IUserService {
         return userResultBean;
     }
 
+    /**
+     * 用户注册
+     */
     @Override
     public UserResultBean register(Map<String, String> params) {
         return null;
