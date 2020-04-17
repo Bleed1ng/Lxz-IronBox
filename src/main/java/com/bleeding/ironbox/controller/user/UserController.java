@@ -47,12 +47,12 @@ public class UserController {
 
     /**
      * 删除用户
-     * @param paramMap
+     * @param params
      * @return
      */
     @RequestMapping(value="deleteUser",method=RequestMethod.GET)
-    public UserResultBean delUser(@RequestParam Map<String,String> paramMap) {
-        return userService.deleteUser(paramMap);
+    public UserResultBean delUser(@RequestParam Map<String,String> params) {
+        return userService.deleteUser(params);
     }
 
     @RequestMapping(value = "/showUsers", method = RequestMethod.GET)

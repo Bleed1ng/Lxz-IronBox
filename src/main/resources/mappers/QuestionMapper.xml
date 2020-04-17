@@ -3,37 +3,35 @@
 <mapper namespace="com.bleeding.ironbox.dao.QuestionDao">
     <!--  查询问题列表  -->
     <select id="getQuestionList" resultType="java.util.Map" parameterType="java.util.Map">
-        select *
-        from tb_question
-        where 1=1
+        select a.*, COUNT(b.replyId) AS replyCount
+        from tb_question a
+        left join tb_reply b
+        on a.questionId = b.questionId
+        where 1 = 1
         <if test="keyword neq null and keyword neq ''">
-            and concat(userId, userName, ifnull(userSex, ''), ifnull(userPhone, ''), ifnull(userEmail, ''))
+            and concat(a.title, ifnull(a.userId, ''), ifnull(a.contents, ''))
             like concat(concat('%', #{keyword}, '%'))
         </if>
+        GROUP BY
+        a.questionId
     </select>
-    <!--  根据ID查询单个用户  -->
-    <select id="getUserById" resultType="java.util.Map" parameterType="java.lang.String">
-    	select userId, userName, userSex, userPhone, userEmail
-    	from tb_user
-    	where userId = #{userId}
+    <!--  根据ID查询单个问题详情  -->
+    <select id="getQuestionById" resultType="java.util.Map" parameterType="java.lang.String">
+    	select a.*, COUNT(b.replyId) AS replyCount
+        FROM tb_question a
+        LEFT JOIN tb_reply b
+        ON a.questionId = b.questionId
+        WHERE a.questionId = #{questionId}
+        GROUP BY a.questionId
     </select>
-    <!--  删除用户  -->
-    <delete id="deleteUser" parameterType="java.lang.String">
-    	delete from tb_user where userId in(${ids})
+    <!--  根据ID查询单个问题的所有回答评论  -->
+    <select id="getReplyById" resultType="java.util.Map" parameterType="java.lang.String">
+    	select *
+    	from tb_reply
+    	where questionId = #{questionId}
+    </select>
+    <!--  删除问题帖子  -->
+    <delete id="deleteQuestion" parameterType="java.lang.String">
+    	delete from tb_question where questionId in(${ids})
     </delete>
-    <!--  新增用户  -->
-    <insert id="insertUser" parameterType="java.util.Map">
-    	insert tb_user(userId, userName, password, userSex, userPhone, userEmail) values(#{userId}, #{userName}, '12345678', #{userSex}, #{userPhone}, #{userEmail})
-    </insert>
-    <!--  更新用户信息  -->
-    <update id="updateUser" parameterType="java.util.Map">
-        update tb_user set userName = #{userName}, userSex = #{userSex}
-        <if test="userPhone neq null and userPhone neq ''">
-            ,userPhone = #{userPhone}
-        </if>
-        <if test="userEmail neq null and userEmail neq ''">
-            ,userEmail = #{userEmail}
-        </if>
-        where userId = #{userId}
-    </update>
 </mapper>

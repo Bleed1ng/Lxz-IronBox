@@ -19,4 +19,6 @@ public interface UserDao {
     Map<String, Object> getUserById(@Param("userId") String userId);
 
     Integer deleteUser(@Param("ids") String ids);
+
+    Map<String, Object> selectAdminById(@Param("adminId") String adminId);
 }

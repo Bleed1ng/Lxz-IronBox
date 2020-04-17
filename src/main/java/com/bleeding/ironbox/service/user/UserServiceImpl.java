@@ -2,6 +2,8 @@ package com.bleeding.ironbox.service.user;
 
 import com.bleeding.ironbox.dao.UserDao;
 import com.bleeding.ironbox.dto.UserResultBean;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -23,8 +25,14 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public UserResultBean getUserList(Map<String, String> params) {
+        int pageNum = Integer.parseInt(params.get("pageNum"));
+        int pageSize = Integer.parseInt(params.get("pageSize"));
+        PageHelper.startPage(pageNum, pageSize);
+
         List<Map<String, Object>> userList = userDao.getUserList(params);
+        PageInfo<Map<String, Object>> pageInfo = new PageInfo<Map<String, Object>>(userList);
         userResultBean.setResult(userList);
+        userResultBean.setPageInfo(pageInfo);
         return userResultBean;
     }
 
@@ -77,12 +85,12 @@ public class UserServiceImpl implements IUserService {
     /**
      * 删除用户
      *
-     * @param paramMap
+     * @param params
      * @return
      */
     @Override
-    public UserResultBean deleteUser(Map<String, String> paramMap) {
-        String ids = paramMap.get("ids");
+    public UserResultBean deleteUser(Map<String, String> params) {
+        String ids = params.get("ids");
         Integer num = userDao.deleteUser(ids);
         UserResultBean result = new UserResultBean();
         if (num != null && num > 0) {
@@ -95,7 +103,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     /**
-     * 登录验证
+     * 用户登录验证
      *
      * @param params
      * @return
@@ -145,5 +153,50 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserResultBean register(Map<String, String> params) {
         return null;
+    }
+
+    /**
+     * 管理员登录验证
+     *
+     * @param params
+     * @return
+     */
+    @Override
+    public UserResultBean adminLogin(Map<String, String> params) {
+        String adminId = params.get("adminId");
+        String password = params.get("password");
+        // 参数校验
+        if (StringUtils.isEmpty(adminId)) {
+            userResultBean.setSuccess(false);
+            userResultBean.setMsg("管理员ID不能为空！");
+            return userResultBean;
+        }
+        if (StringUtils.isEmpty(password)) {
+            userResultBean.setSuccess(false);
+            userResultBean.setMsg("密码不能为空！");
+            return userResultBean;
+        }
+
+        // 根据用户名查询数据库用户记录
+        Map<String, Object> admin = userDao.selectAdminById(adminId);
+
+        // 判断是否存在用户
+        if (admin == null) {
+            userResultBean.setSuccess(false);
+            userResultBean.setMsg("用户名或密码不正确！");
+            return userResultBean;
+        }
+        String pwd = admin.get("adminPassword") == null ? null : admin.get("adminPassword").toString();
+
+        // 比较密码正确与否
+        if (password.equals(pwd)) {
+            userResultBean.setSuccess(true);
+            userResultBean.setMsg("登录成功！");
+            userResultBean.setResult(admin);
+        } else {
+            userResultBean.setSuccess(false);
+            userResultBean.setMsg("用户名或密码不正确！");
+        }
+        return userResultBean;
     }
 }

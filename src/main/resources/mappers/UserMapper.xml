@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bleeding.ironbox.dao.UserDao">
+    <!--  用户登录验证查询  -->
     <select id="selectUserByUserId" resultType="java.util.Map" parameterType="java.lang.String">
 		select userId, userName, password from tb_user where userId = #{userId}
 	</select>
@@ -40,4 +41,10 @@
         </if>
         where userId = #{userId}
     </update>
+    <!--  管理员登录验证查询  -->
+    <select id="selectAdminById" resultType="java.util.Map" parameterType="java.lang.String">
+    	select adminId, adminPassword
+    	from tb_admin
+    	where adminId = #{adminId}
+    </select>
 </mapper>

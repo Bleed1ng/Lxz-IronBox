@@ -7,4 +7,8 @@ import java.util.Map;
 public interface IQuestionService {
 
     QuestionResultBean getQuestionList(Map<String, String> params);
+
+    QuestionResultBean deleteQuestion(Map<String, String> params);
+
+    QuestionResultBean getQuestionById(String questionId);
 }

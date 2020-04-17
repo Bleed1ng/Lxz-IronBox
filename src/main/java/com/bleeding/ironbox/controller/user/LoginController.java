@@ -17,7 +17,17 @@ public class LoginController {
     private IUserService userService;
 
     /**
-     * 登录验证
+     * 管理员登录验证
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "adminLogin", method = RequestMethod.POST)
+    public UserResultBean adminLogin(@RequestBody Map<String, String> params) {
+        return userService.adminLogin(params);
+    }
+
+    /**
+     * 用户登录验证
      * @param params
      * @return
      */

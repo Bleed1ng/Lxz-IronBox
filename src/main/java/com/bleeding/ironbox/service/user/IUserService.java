@@ -6,6 +6,8 @@ import java.util.Map;
 
 public interface IUserService {
 
+    UserResultBean adminLogin(Map<String, String> params);
+
     UserResultBean login(Map<String, String> params);
 
     UserResultBean register(Map<String, String> params);
@@ -16,5 +18,6 @@ public interface IUserService {
 
     UserResultBean getUserById(String userId);
 
-    UserResultBean deleteUser(Map<String, String> paramMap);
+    UserResultBean deleteUser(Map<String, String> params);
+
 }
