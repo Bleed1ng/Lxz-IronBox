@@ -1,7 +1,7 @@
 package com.bleeding.ironbox.controller;
 
 import com.bleeding.ironbox.config.exception.AjaxResponse;
-import com.bleeding.ironbox.dto.UserDTO;
+import com.bleeding.ironbox.dto.User;
 import com.bleeding.ironbox.dto.UserResultBean;
 import com.bleeding.ironbox.service.ExceptionTestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import javax.jws.soap.SOAPBinding;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,7 +74,7 @@ public class testCtrl {
     }
 
     @GetMapping("/postForObject")
-    public UserDTO postForObject() {
+    public User postForObject() {
         // 远程访问的url
         String url = "http://localhost:8085/user/addUser2";
         // Post方法必须使用MultiValueMap传参，使用UserDTO传参也可以
@@ -83,12 +82,12 @@ public class testCtrl {
         paramMap.add("userId", 001);
         paramMap.add("userName", "Bleeding");
         // 返回对象
-        UserDTO userDTO = restTemplate.postForObject(url, paramMap, UserDTO.class);
+        User userDTO = restTemplate.postForObject(url, paramMap, User.class);
         return userDTO;
     }
 
     @GetMapping("/postForObject2")
-    public UserDTO postForObject2() {
+    public User postForObject2() {
         // 声明一个请求头
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -98,24 +97,24 @@ public class testCtrl {
          * 如果或是RequestBody的形式，此处就不能再使用MultiValueMap传参，会报错；可以使用HasMap代替，但是会有警告。
          */
         // 入参使用包装类
-        UserDTO userDTO = new UserDTO();
+        User userDTO = new User();
         userDTO.setUserId(003);
         userDTO.setUserName("Bleeding");
         // 再用HttpEntity包装，传入请求头和UserDTO
-        HttpEntity<UserDTO> entityParam = new HttpEntity<UserDTO>(userDTO, headers);
-        UserDTO result = restTemplate.postForObject(url, entityParam, UserDTO.class);
+        HttpEntity<User> entityParam = new HttpEntity<User>(userDTO, headers);
+        User result = restTemplate.postForObject(url, entityParam, User.class);
         return result;
     }
 
     @GetMapping("/postForEntity")
-    public UserDTO postForEntity() {
+    public User postForEntity() {
         // 远程访问的url
         String url = "http://localhost:8085/user/addUser1";
         MultiValueMap<String, Object> paramMap = new LinkedMultiValueMap<String, Object>();
         paramMap.add("userId", 004);
         paramMap.add("userName", "Bleeding");
 
-        ResponseEntity<UserDTO> userDTOResponseEntity = restTemplate.postForEntity(url, paramMap, UserDTO.class);
+        ResponseEntity<User> userDTOResponseEntity = restTemplate.postForEntity(url, paramMap, User.class);
         // 返回状态码包装类
         HttpStatus statusCode = userDTOResponseEntity.getStatusCode();
         // 返回状态码
@@ -127,7 +126,7 @@ public class testCtrl {
     }
 
     @GetMapping("/exchange")
-    public UserDTO exchange() {
+    public User exchange() {
         // 远程访问的url
         String url = "http://localhost:8085/user/addUser1";
         // 传参使用MultiValueMap
@@ -137,7 +136,7 @@ public class testCtrl {
         // HttpEntity包装传参
         HttpEntity<MultiValueMap> requestEntity = new HttpEntity<MultiValueMap>(paramMap);
         // ResponseEntity包装返回结果
-        ResponseEntity<UserDTO> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, UserDTO.class);
+        ResponseEntity<User> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, User.class);
         return response.getBody();
     }
 }

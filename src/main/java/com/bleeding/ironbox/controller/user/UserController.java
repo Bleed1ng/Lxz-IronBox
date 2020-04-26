@@ -1,6 +1,6 @@
 package com.bleeding.ironbox.controller.user;
 
-import com.bleeding.ironbox.dto.UserDTO;
+import com.bleeding.ironbox.dto.User;
 import com.bleeding.ironbox.dto.UserResultBean;
 import com.bleeding.ironbox.service.user.IUserService;
 import org.springframework.web.bind.annotation.*;
@@ -69,20 +69,20 @@ public class UserController {
     }
 
     @RequestMapping(value = "/addUser1")
-    public UserDTO addUser1(UserDTO userDTO) {
+    public User addUser1(User userDTO) {
         return userDTO;
     }
 
     @RequestMapping(value = "/addUser2", method = RequestMethod.POST)
-    public UserDTO addUser2(int userId, String userName) {
-        UserDTO userDTO = new UserDTO();
+    public User addUser2(int userId, String userName) {
+        User userDTO = new User();
         userDTO.setUserId(userId);
         userDTO.setUserName(userName);
         return userDTO;
     }
 
     @RequestMapping(value = "/addUser3")
-    public UserDTO addUser3(@RequestBody UserDTO userDTO) {
+    public User addUser3(@RequestBody User userDTO) {
         userDTO.setUserName(userDTO.getUserName() + "from RequestBody");
         return userDTO;
     }

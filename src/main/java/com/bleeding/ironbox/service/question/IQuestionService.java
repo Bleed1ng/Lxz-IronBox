@@ -10,5 +10,15 @@ public interface IQuestionService {
 
     QuestionResultBean deleteQuestion(Map<String, String> params);
 
-    QuestionResultBean getQuestionById(String questionId);
+    QuestionResultBean getQuestionById(Map<String, String> params);
+
+    QuestionResultBean addQuestion(Map<String, String> params);
+
+    QuestionResultBean addAnswer(Map<String, String> params);
+
+    QuestionResultBean answerLike(Map<String, String> params);
+
+    QuestionResultBean answerUnLike(Map<String, String> params);
+
+    QuestionResultBean deleteAnswer(Map<String, String> params);
 }

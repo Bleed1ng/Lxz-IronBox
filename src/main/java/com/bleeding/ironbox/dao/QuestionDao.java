@@ -14,5 +14,15 @@ public interface QuestionDao {
 
     Map<String, Object> getQuestionById(@Param("questionId") String questionId);
 
-    List<Map<String, Object>> getReplyById(@Param("questionId") String questionId);
+    List<Map<String, Object>> getAnswerById(Map<String, String> params);
+
+    Integer insertQuestion(Map<String, String> params);
+
+    Integer insertAnswer(Map<String, String> answer);
+
+    Integer insertAnswerLike(Map<String, String> params);
+
+    Integer deleteAnswerLike(Map<String, String> params);
+
+    Integer deleteAnswer(String answerId);
 }

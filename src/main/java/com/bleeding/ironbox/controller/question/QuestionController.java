@@ -38,11 +38,66 @@ public class QuestionController {
     /**
      * 根据ID查询单个问题详情
      *
-     * @param questionId
+     * @param params
      * @return
      */
-    @RequestMapping(value="getQuestionById",method=RequestMethod.GET)
-    public QuestionResultBean getQuestionById(@RequestParam("questionId") String questionId) {
-        return questionService.getQuestionById(questionId);
+    @RequestMapping(value="getQuestionById", method=RequestMethod.GET)
+    public QuestionResultBean getQuestionById(@RequestParam Map<String, String> params) {
+        return questionService.getQuestionById(params);
+    }
+
+    /**
+     * 新增问题
+     *
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "ask", method = RequestMethod.POST)
+    public QuestionResultBean addQuestion(@RequestBody Map<String, String> params) {
+        return questionService.addQuestion(params);
+    }
+
+    /**
+     * 新增回答
+     *
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "answer", method = RequestMethod.POST)
+    public QuestionResultBean addAnswer(@RequestBody Map<String, String> params) {
+        return questionService.addAnswer(params);
+    }
+
+    /**
+     * 删除回答
+     *
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "deleteAnswer", method = RequestMethod.GET)
+    public QuestionResultBean deleteAnswer(@RequestParam Map<String, String> params) {
+        return questionService.deleteAnswer(params);
+    }
+
+    /**
+     * 回答点亮
+     *
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "answerLike", method = RequestMethod.POST)
+    public QuestionResultBean answerLike(@RequestBody Map<String, String> params) {
+        return questionService.answerLike(params);
+    }
+
+    /**
+     * 取消回答点亮
+     *
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "answerUnLike", method = RequestMethod.POST)
+    public QuestionResultBean answerUnLike(@RequestBody Map<String, String> params) {
+        return questionService.answerUnLike(params);
     }
 }

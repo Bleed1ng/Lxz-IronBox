@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -49,12 +50,11 @@ public class UserServiceImpl implements IUserService {
         String userId = user.get("userId");
         Integer num = new Integer(0);
 
-        if (userDao.getUserById(userId) == null) {
-            System.out.println("新增");
-            // 新增用户
+        if (StringUtils.isEmpty(userId)) {
+            // 注册新增用户
+            user.put("userId", UUID.randomUUID().toString().toUpperCase());
             num = userDao.insertUser(user);
         } else {
-            System.out.println("更新");
             // 更新用户
             num = userDao.updateUser(user);
         }

@@ -7,13 +7,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(Exception.class)
+    // @ExceptionHandler(Exception.class)
     @ResponseBody
     public Object myExceptionHandler() {
         return "您访问的页面异常，请稍后重试";
     }
 
-    @ExceptionHandler(java.lang.NullPointerException.class)
+//    @ExceptionHandler(java.lang.NullPointerException.class)
     @ResponseBody
     public ModelAndView nullPointerExceptionHandler(Exception e) {
         ModelAndView mv = new ModelAndView();
@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
         return mv;
     }
 
-    @ExceptionHandler(java.lang.ArithmeticException.class)
+//    @ExceptionHandler(java.lang.ArithmeticException.class)
     public String arithmeticExceptionHandler(Exception e) {
 //        ModelAndView mv = new ModelAndView();
 //        mv.addObject("error", e.toString());
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
         return "error";
     }
 
-    @ExceptionHandler(CustomException.class)
+//    @ExceptionHandler(CustomException.class)
     @ResponseBody
     public AjaxResponse customerException(CustomException e) {
         if (e.getCode() == CustomExceptionType.SYSTEM_ERROR.getCode()) {

@@ -3,35 +3,68 @@
 <mapper namespace="com.bleeding.ironbox.dao.QuestionDao">
     <!--  查询问题列表  -->
     <select id="getQuestionList" resultType="java.util.Map" parameterType="java.util.Map">
-        select a.*, COUNT(b.replyId) AS replyCount
-        from tb_question a
-        left join tb_reply b
-        on a.questionId = b.questionId
+        select q.*, COUNT(a.answerId) AS answerCount
+        from tb_question q
+        left join tb_answer a
+        on q.questionId = a.questionId
         where 1 = 1
         <if test="keyword neq null and keyword neq ''">
-            and concat(a.title, ifnull(a.userId, ''), ifnull(a.contents, ''))
+            and concat(q.title, ifnull(q.userId, ''), ifnull(q.contents, ''))
             like concat(concat('%', #{keyword}, '%'))
         </if>
         GROUP BY
-        a.questionId
+        q.questionId
     </select>
     <!--  根据ID查询单个问题详情  -->
     <select id="getQuestionById" resultType="java.util.Map" parameterType="java.lang.String">
-    	select a.*, COUNT(b.replyId) AS replyCount
-        FROM tb_question a
-        LEFT JOIN tb_reply b
-        ON a.questionId = b.questionId
-        WHERE a.questionId = #{questionId}
-        GROUP BY a.questionId
+    	select q.*, COUNT(a.answerId) AS answerCount
+        from tb_question q
+        left join tb_answer a
+        ON q.questionId = a.questionId
+        WHERE q.questionId = #{questionId}
+        GROUP BY q.questionId
     </select>
     <!--  根据ID查询单个问题的所有回答评论  -->
-    <select id="getReplyById" resultType="java.util.Map" parameterType="java.lang.String">
-    	select *
-    	from tb_reply
-    	where questionId = #{questionId}
+    <select id="getAnswerById" resultType="java.util.Map" parameterType="java.util.Map">
+        select * from tb_answer where questionId = #{questionId}
     </select>
+<!--
+select * from tb_answer where questionId = #{questionId}
+
+select ta.*, COUNT(tl.answerLikeId) as answerLikeCount
+        from tb_answer ta
+        left join tb_answer_like tl
+        on ta.answerId = tl.answerId
+        where ta.questionId = #{questionId}
+        and tl.answerId in (select answerId from tb_answer)
+        group by tl.answerId
+-->
     <!--  删除问题帖子  -->
     <delete id="deleteQuestion" parameterType="java.lang.String">
     	delete from tb_question where questionId in(${ids})
+    </delete>
+    <!--  新增问题  -->
+    <insert id="insertQuestion" parameterType="java.util.Map">
+        insert tb_question(questionId, userId, title, contents, questionImage, issueTime)
+        value (#{questionId}, #{userId}, #{title}, #{contents}, "LU", now())
+    </insert>
+    <!--  新增问题回答  -->
+    <insert id="insertAnswer" parameterType="java.util.Map">
+        insert tb_answer(answerId, questionId, userId, answerContents, answerTime)
+        value (#{answerId}, #{questionId}, #{userId}, #{answerContents}, now())
+    </insert>
+    <!--  删除回答  -->
+    <delete id="deleteAnswer" parameterType="java.lang.String">
+    	delete from tb_answer where answerId = #{answerId}
+    </delete>
+    <!--  回答点亮  -->
+    <insert id="insertAnswerLike" parameterType="java.util.Map">
+        insert tb_answer(isLike, userId, answerId, likeTime)
+        value (1, #{userId}, #{answerId}, now())
+    </insert>
+    <!--  取消点亮  -->
+    <delete id="deleteAnswerLike" parameterType="java.util.Map">
+        delete from tb_answer
+        where userId = #{userId} and answerId = #{answerId}
     </delete>
 </mapper>

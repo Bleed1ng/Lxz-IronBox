@@ -43,6 +43,6 @@ public class LoginController {
      */
     @RequestMapping(value = "register", method = RequestMethod.POST)
     public UserResultBean register(@RequestBody Map<String, String> params) {
-        return userService.register(params);
+        return userService.saveUser(params);
     }
 }

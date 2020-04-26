@@ -7,7 +7,7 @@
 	</select>
     <!--  查询用户列表  -->
     <select id="getUserList" resultType="java.util.Map" parameterType="java.util.Map">
-        select *
+        select userId, userName, userSex, userPhone, userEmail
         from tb_user
         where 1=1
         <if test="keyword neq null and keyword neq ''">
@@ -28,7 +28,8 @@
     </delete>
     <!--  新增用户  -->
     <insert id="insertUser" parameterType="java.util.Map">
-    	insert tb_user(userId, userName, password, userSex, userPhone, userEmail) values(#{userId}, #{userName}, '12345678', #{userSex}, #{userPhone}, #{userEmail})
+    	insert tb_user(userId, userName, password, userSex, userPhone, userEmail, profile, registerTime)
+    	values(#{userId}, #{userName}, #{password}, #{userSex}, #{userPhone}, #{userEmail}, "LU", now())
     </insert>
     <!--  更新用户信息  -->
     <update id="updateUser" parameterType="java.util.Map">
