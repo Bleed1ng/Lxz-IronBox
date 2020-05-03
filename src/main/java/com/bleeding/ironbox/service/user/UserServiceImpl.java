@@ -2,6 +2,7 @@ package com.bleeding.ironbox.service.user;
 
 import com.bleeding.ironbox.dao.UserDao;
 import com.bleeding.ironbox.dto.UserResultBean;
+import com.bleeding.ironbox.utils.IronboxUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,10 @@ public class UserServiceImpl implements IUserService {
         Map<String, String> user = params;
         String userId = user.get("userId");
         Integer num = new Integer(0);
+
+        // md5加密
+        String password = IronboxUtil.md5(params.get("password"));
+        params.put("password", password);
 
         if (StringUtils.isEmpty(userId)) {
             // 注册新增用户
@@ -111,7 +116,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserResultBean login(Map<String, String> params) {
         String userId = params.get("userId");
-        String password = params.get("password");
+        String password = IronboxUtil.md5(params.get("password"));
         // 参数校验
         if (StringUtils.isEmpty(userId)) {
             userResultBean.setSuccess(false);
@@ -133,6 +138,7 @@ public class UserServiceImpl implements IUserService {
             userResultBean.setMsg("用户名或密码不正确！");
             return userResultBean;
         }
+
         String pwd = user.get("password") == null ? null : user.get("password").toString();
 
         // 比较密码正确与否

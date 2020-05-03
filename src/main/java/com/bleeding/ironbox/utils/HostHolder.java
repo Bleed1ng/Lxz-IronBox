@@ -1,4 +1,4 @@
-package com.bleeding.ironbox.util;
+package com.bleeding.ironbox.utils;
 
 import com.bleeding.ironbox.dto.User;
 import org.springframework.stereotype.Component;

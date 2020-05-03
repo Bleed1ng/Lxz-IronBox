@@ -1,4 +1,4 @@
-package com.bleeding.ironbox.service.answer;
+package com.bleeding.ironbox.service.question;
 
 import com.bleeding.ironbox.dao.ReplyDao;
 import com.bleeding.ironbox.dto.QuestionResultBean;

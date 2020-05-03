@@ -1,13 +1,13 @@
 package com.bleeding.ironbox.service.like;
 
-import com.bleeding.ironbox.util.RedisKeyUtil;
+import com.bleeding.ironbox.utils.RedisKeyUtil;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
 @Service
-public class LikeServiceImpl implements ILikeService{
+public class LikeServiceImpl implements ILikeService {
     @Resource
     private RedisTemplate redisTemplate;
 
@@ -20,6 +20,10 @@ public class LikeServiceImpl implements ILikeService{
             redisTemplate.opsForSet().remove(entityLikeKey, userId);
         } else {
             redisTemplate.opsForSet().add(entityLikeKey, userId);
+        }
+        if (entityType == 1) {
+            String redisKey = RedisKeyUtil.getQuestionScoreKey();
+            redisTemplate.opsForSet().add(redisKey, entityId);
         }
     }
 

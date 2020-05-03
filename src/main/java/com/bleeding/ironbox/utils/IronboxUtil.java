@@ -1,4 +1,4 @@
-package com.bleeding.ironbox.util;
+package com.bleeding.ironbox.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.util.DigestUtils;

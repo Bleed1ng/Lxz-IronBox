@@ -20,9 +20,11 @@ public interface QuestionDao {
 
     Integer insertAnswer(Map<String, String> answer);
 
-    Integer insertAnswerLike(Map<String, String> params);
-
-    Integer deleteAnswerLike(Map<String, String> params);
-
     Integer deleteAnswer(String answerId);
+
+    List<Map<String, Object>> getQuestionListByUserId(Map<String, String> params);
+
+    Integer updateScore(String questionId, double score);
+
+    List<Map<String, Object>> getAnswerCount();
 }

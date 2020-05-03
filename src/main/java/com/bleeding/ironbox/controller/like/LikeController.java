@@ -1,10 +1,7 @@
 package com.bleeding.ironbox.controller.like;
 
-import com.bleeding.ironbox.dto.User;
 import com.bleeding.ironbox.service.like.ILikeService;
-import com.bleeding.ironbox.util.HostHolder;
-import com.bleeding.ironbox.util.IronboxUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.bleeding.ironbox.utils.IronboxUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

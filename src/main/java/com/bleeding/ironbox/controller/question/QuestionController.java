@@ -58,6 +58,17 @@ public class QuestionController {
     }
 
     /**
+     * 根据用户ID查询问题列表
+     *
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "getQuestionListByUserId", method = RequestMethod.POST)
+    public QuestionResultBean getQuestionListByUserId(@RequestBody Map<String, String> params) {
+        return questionService.getQuestionListByUserId(params);
+    }
+
+    /**
      * 新增回答
      *
      * @param params
@@ -79,25 +90,4 @@ public class QuestionController {
         return questionService.deleteAnswer(params);
     }
 
-    /**
-     * 回答点亮
-     *
-     * @param params
-     * @return
-     */
-    @RequestMapping(value = "answerLike", method = RequestMethod.POST)
-    public QuestionResultBean answerLike(@RequestBody Map<String, String> params) {
-        return questionService.answerLike(params);
-    }
-
-    /**
-     * 取消回答点亮
-     *
-     * @param params
-     * @return
-     */
-    @RequestMapping(value = "answerUnLike", method = RequestMethod.POST)
-    public QuestionResultBean answerUnLike(@RequestBody Map<String, String> params) {
-        return questionService.answerUnLike(params);
-    }
 }

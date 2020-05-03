@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bleeding.ironbox.dao.AnswerDao">
+    <!--  根据用户ID查询我的回答列表  -->
+    <select id="getAnswerListByUserId" resultType="java.util.Map" parameterType="java.util.Map">
+    	select ta.*
+    	from tb_answer ta
+    	where ta.userId = #{userId}
+        <if test="keyword neq null and keyword neq ''">
+            and concat(ta.answerContents)
+            like concat(concat('%', #{keyword}, '%'))
+        </if>
+    </select>
+</mapper>

@@ -1,7 +1,7 @@
-package com.bleeding.ironbox.controller.answer;
+package com.bleeding.ironbox.controller.question;
 
 import com.bleeding.ironbox.dto.QuestionResultBean;
-import com.bleeding.ironbox.service.answer.IReplyService;
+import com.bleeding.ironbox.service.question.IReplyService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

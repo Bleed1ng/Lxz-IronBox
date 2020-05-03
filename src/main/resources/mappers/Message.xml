@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bleeding.ironbox.dao.MessageDao">
+    <!--  根据用户ID查询收到的问题回答  -->
+    <select id="getAnswerMsg" resultType="java.util.Map" parameterType="java.lang.String">
+        select * from tb_answer
+        where questionId in (select questionId from tb_question where userId = #{userId})
+    </select>
+    <!--  根据用户ID查询收到的回答回复  -->
+    <select id="getReplyMsg" resultType="java.util.Map" parameterType="java.lang.String">
+        select * from tb_reply
+        where answerId in (select answerId from tb_reply where userId = #{userId})
+    </select>
+</mapper>

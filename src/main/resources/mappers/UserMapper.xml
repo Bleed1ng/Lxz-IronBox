@@ -33,7 +33,7 @@
     </insert>
     <!--  更新用户信息  -->
     <update id="updateUser" parameterType="java.util.Map">
-        update tb_user set userName = #{userName}, userSex = #{userSex}
+        update tb_user set userName = #{userName}, password = #{password}, userSex = #{userSex}
         <if test="userPhone neq null and userPhone neq ''">
             ,userPhone = #{userPhone}
         </if>

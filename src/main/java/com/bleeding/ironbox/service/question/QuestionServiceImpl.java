@@ -1,10 +1,14 @@
 package com.bleeding.ironbox.service.question;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.bleeding.ironbox.dao.QuestionDao;
 import com.bleeding.ironbox.dto.QuestionResultBean;
 import com.bleeding.ironbox.service.like.ILikeService;
+import com.bleeding.ironbox.utils.RedisKeyUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -21,6 +25,10 @@ public class QuestionServiceImpl implements IQuestionService {
     private QuestionDao questionDao;
     @Resource
     ILikeService likeService;
+    @Resource
+    private RedisTemplate redisTemplate;
+    @Resource
+    IQuestionService questionService;
 
     /**
      * 查询问题列表
@@ -30,11 +38,26 @@ public class QuestionServiceImpl implements IQuestionService {
      */
     @Override
     public QuestionResultBean getQuestionList(Map<String, String> params) {
+//        String orderMode = params.get("orderMode");
+//        System.out.println(orderMode);
+//        if (orderMode.equals("hot")) {
+//            updateScore();
+//        }
+
+        List<Map<String, Object>> questionList = new ArrayList<>();
         int pageNum = Integer.parseInt(params.get("pageNum"));
         int pageSize = Integer.parseInt(params.get("pageSize"));
         PageHelper.startPage(pageNum, pageSize);
-        List<Map<String, Object>> questionList = questionDao.getQuestionList(params);
+        List<Map<String, Object>> questionListNolike = questionDao.getQuestionList(params);
+        // 查询问题的点赞数
+        for (Map<String, Object> question : questionListNolike) {
+            String questionId = question.get("questionId").toString();
+            long answerLikeCount = likeService.findEntityLikeCount(1, questionId);
+            question.put("likeCount", answerLikeCount);
+            questionList.add(question);
+        }
         PageInfo<Map<String, Object>> pageInfo = new PageInfo<Map<String, Object>>(questionList);
+
         questionResultBean.setResult(questionList);
         questionResultBean.setPageInfo(pageInfo);
         return questionResultBean;
@@ -111,8 +134,13 @@ public class QuestionServiceImpl implements IQuestionService {
     @Override
     public QuestionResultBean addQuestion(Map<String, String> params) {
         Map<String, String> question = params;
-        question.put("questionId", UUID.randomUUID().toString().toUpperCase());
+        String questionId = UUID.randomUUID().toString().toUpperCase();
+        question.put("questionId", questionId);
         Integer num = questionDao.insertQuestion(question);
+
+        String redisKey = RedisKeyUtil.getQuestionScoreKey();
+        redisTemplate.opsForSet().add(redisKey, questionId);
+
         if (num != null && num > 0) {
             questionResultBean.setMsg("保存成功");
         } else {
@@ -120,6 +148,67 @@ public class QuestionServiceImpl implements IQuestionService {
             questionResultBean.setMsg("保存失败");
         }
         return questionResultBean;
+    }
+
+    /**
+     * 根据用户ID查询问题列表
+     *
+     * @param params
+     * @return
+     */
+    @Override
+    public QuestionResultBean getQuestionListByUserId(Map<String, String> params) {
+        List<Map<String, Object>> questionList = new ArrayList<>();
+        int pageNum = Integer.parseInt(params.get("pageNum"));
+        int pageSize = Integer.parseInt(params.get("pageSize"));
+        PageHelper.startPage(pageNum, pageSize);
+        // 查询问题列表
+        List<Map<String, Object>> questionListNolike = questionDao.getQuestionListByUserId(params);
+        // 查询问题的点赞数
+        for (Map<String, Object> question : questionListNolike) {
+            String questionId = question.get("questionId").toString();
+            long answerLikeCount = likeService.findEntityLikeCount(1, questionId);
+            question.put("likeCount", answerLikeCount);
+            questionList.add(question);
+        }
+        PageInfo<Map<String, Object>> pageInfo = new PageInfo<Map<String, Object>>(questionList);
+
+        questionResultBean.setResult(questionList);
+        questionResultBean.setPageInfo(pageInfo);
+        return questionResultBean;
+    }
+
+    /**
+     * 更新问题热度
+     *
+     * @return
+     */
+    @Override
+    public Integer updateScore() {
+        // 查询问题ID以及回答数量
+        List<Map<String, Object>> list = questionService.getAnswerCount();
+        for (Map<String, Object> el : list) {
+            String questionId = (String) el.get("questionId");
+            long answerCount = (long) el.get("answerCount");
+            // 点赞数量
+            long likeCount = likeService.findEntityLikeCount(1, questionId);
+
+            // 计算权重
+            double score = answerCount + (likeCount * 2);
+            // 更新问题热度
+            return questionDao.updateScore(questionId, score);
+        }
+        return null;
+    }
+
+    /**
+     * 查询问题ID以及回答数量
+     *
+     * @return
+     */
+    @Override
+    public List<Map<String, Object>> getAnswerCount() {
+        return questionDao.getAnswerCount();
     }
 
     /**
@@ -131,8 +220,13 @@ public class QuestionServiceImpl implements IQuestionService {
     @Override
     public QuestionResultBean addAnswer(Map<String, String> params) {
         Map<String, String> answer = params;
+        String questionId = params.get("questionId");
         answer.put("answerId", UUID.randomUUID().toString().toUpperCase());
         Integer num = questionDao.insertAnswer(answer);
+
+        String redisKey = RedisKeyUtil.getQuestionScoreKey();
+        redisTemplate.opsForSet().add(redisKey, questionId);
+
         if (num != null && num > 0) {
             questionResultBean.setMsg("保存成功");
         } else {
@@ -161,36 +255,4 @@ public class QuestionServiceImpl implements IQuestionService {
         return questionResultBean;
     }
 
-    /**
-     * 回答点赞
-     *
-     * @param params
-     * @return
-     */
-    @Override
-    public QuestionResultBean answerLike(Map<String, String> params) {
-        Integer num = questionDao.insertAnswerLike(params);
-        if (num != null && num > 0) {
-            questionResultBean.setMsg("保存成功");
-        } else {
-            questionResultBean.setSuccess(false);
-            questionResultBean.setMsg("保存失败");
-        }
-        return questionResultBean;
-    }
-
-    /**
-     * 取消点赞
-     */
-    @Override
-    public QuestionResultBean answerUnLike(Map<String, String> params) {
-        Integer num = questionDao.deleteAnswerLike(params);
-        if (num != null && num > 0) {
-            questionResultBean.setMsg("取消成功");
-        } else {
-            questionResultBean.setSuccess(false);
-            questionResultBean.setMsg("取消失败");
-        }
-        return questionResultBean;
-    }
 }

@@ -12,8 +12,13 @@
             and concat(q.title, ifnull(q.userId, ''), ifnull(q.contents, ''))
             like concat(concat('%', #{keyword}, '%'))
         </if>
-        GROUP BY
-        q.questionId
+        GROUP BY q.questionId
+        <if test="orderMode == 0">
+            order by q.issueTime desc
+        </if>
+        <if test="orderMode == 1">
+            order by q.questionScore desc, q.issueTime desc
+        </if>
     </select>
     <!--  根据ID查询单个问题详情  -->
     <select id="getQuestionById" resultType="java.util.Map" parameterType="java.lang.String">
@@ -28,26 +33,42 @@
     <select id="getAnswerById" resultType="java.util.Map" parameterType="java.util.Map">
         select * from tb_answer where questionId = #{questionId}
     </select>
-<!--
-select * from tb_answer where questionId = #{questionId}
-
-select ta.*, COUNT(tl.answerLikeId) as answerLikeCount
-        from tb_answer ta
-        left join tb_answer_like tl
-        on ta.answerId = tl.answerId
-        where ta.questionId = #{questionId}
-        and tl.answerId in (select answerId from tb_answer)
-        group by tl.answerId
--->
     <!--  删除问题帖子  -->
     <delete id="deleteQuestion" parameterType="java.lang.String">
     	delete from tb_question where questionId in(${ids})
     </delete>
     <!--  新增问题  -->
     <insert id="insertQuestion" parameterType="java.util.Map">
-        insert tb_question(questionId, userId, title, contents, questionImage, issueTime)
-        value (#{questionId}, #{userId}, #{title}, #{contents}, "LU", now())
+        insert tb_question(questionId, userId, title, contents, questionImage, issueTime, questionScore)
+        value (#{questionId}, #{userId}, #{title}, #{contents}, "LU", now(), 1.00)
     </insert>
+    <!--  根据用户ID查询问题列表  -->
+    <select id="getQuestionListByUserId" resultType="java.util.Map" parameterType="java.util.Map">
+        select q.*, COUNT(a.answerId) AS answerCount
+        from tb_question q
+        left join tb_answer a
+        on q.questionId = a.questionId
+        where q.userId = #{userId}
+        <if test="keyword neq null and keyword neq ''">
+            and concat(q.title, ifnull(q.userId, ''), ifnull(q.contents, ''))
+            like concat(concat('%', #{keyword}, '%'))
+        </if>
+        GROUP BY
+        q.questionId
+    </select>
+    <!--  查询问题ID以及回答数量  -->
+    <select id="getAnswerCount" resultType="java.util.Map" parameterType="java.util.Map">
+        select tq.questionId, COUNT(ta.answerId) as answerCount
+        from tb_question tq
+        left join tb_answer ta
+        on tq.questionId = ta.questionId
+        where 1 = 1
+        group by tq.questionId
+    </select>
+    <!--  更新问题热度  -->
+    <update id="updateScore">
+        update tb_question set questionScore = #{score} where questionId = #{questionId}
+    </update>
     <!--  新增问题回答  -->
     <insert id="insertAnswer" parameterType="java.util.Map">
         insert tb_answer(answerId, questionId, userId, answerContents, answerTime)
@@ -56,15 +77,5 @@ select ta.*, COUNT(tl.answerLikeId) as answerLikeCount
     <!--  删除回答  -->
     <delete id="deleteAnswer" parameterType="java.lang.String">
     	delete from tb_answer where answerId = #{answerId}
-    </delete>
-    <!--  回答点亮  -->
-    <insert id="insertAnswerLike" parameterType="java.util.Map">
-        insert tb_answer(isLike, userId, answerId, likeTime)
-        value (1, #{userId}, #{answerId}, now())
-    </insert>
-    <!--  取消点亮  -->
-    <delete id="deleteAnswerLike" parameterType="java.util.Map">
-        delete from tb_answer
-        where userId = #{userId} and answerId = #{answerId}
     </delete>
 </mapper>

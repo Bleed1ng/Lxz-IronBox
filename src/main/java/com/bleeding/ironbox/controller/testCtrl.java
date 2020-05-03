@@ -1,6 +1,5 @@
 package com.bleeding.ironbox.controller;
 
-import com.bleeding.ironbox.config.exception.AjaxResponse;
 import com.bleeding.ironbox.dto.User;
 import com.bleeding.ironbox.dto.UserResultBean;
 import com.bleeding.ironbox.service.ExceptionTestService;
@@ -32,17 +31,6 @@ public class testCtrl {
         String str = null;
         str.length();
         return "index";
-    }
-
-    @RequestMapping("/ex/system")
-    public @ResponseBody AjaxResponse exceptionSystem() {
-        exceptionTestService.systemError();
-        return AjaxResponse.success();
-    }
-
-    @RequestMapping("/ex/user")
-    public @ResponseBody AjaxResponse exceptionUser(Integer input) {
-        return AjaxResponse.success(exceptionTestService.userError(input));
     }
 
     @GetMapping("/getForObject")

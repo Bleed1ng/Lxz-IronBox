@@ -2,6 +2,7 @@ package com.bleeding.ironbox.service.question;
 
 import com.bleeding.ironbox.dto.QuestionResultBean;
 
+import java.util.List;
 import java.util.Map;
 
 public interface IQuestionService {
@@ -16,9 +17,11 @@ public interface IQuestionService {
 
     QuestionResultBean addAnswer(Map<String, String> params);
 
-    QuestionResultBean answerLike(Map<String, String> params);
-
-    QuestionResultBean answerUnLike(Map<String, String> params);
-
     QuestionResultBean deleteAnswer(Map<String, String> params);
+
+    QuestionResultBean getQuestionListByUserId(Map<String, String> params);
+
+    Integer updateScore();
+
+    List<Map<String, Object>> getAnswerCount();
 }
