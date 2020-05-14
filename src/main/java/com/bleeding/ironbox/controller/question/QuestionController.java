@@ -69,6 +69,17 @@ public class QuestionController {
     }
 
     /**
+     * 根据用户ID查询关注问题列表
+     *
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "getFollowQuestionListByUserId", method = RequestMethod.POST)
+    public QuestionResultBean getFollowQuestionListByUserId(@RequestBody Map<String, String> params) {
+        return questionService.getFollowQuestionListByUserId(params);
+    }
+
+    /**
      * 新增回答
      *
      * @param params

@@ -179,6 +179,35 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     /**
+     * 根据用户ID查询问题列表
+     *
+     * @param params
+     * @return
+     */
+    @Override
+    public QuestionResultBean getFollowQuestionListByUserId(Map<String, String> params) {
+        List<Map<String, Object>> questionList = new ArrayList<>();
+        int pageNum = Integer.parseInt(params.get("pageNum"));
+        int pageSize = Integer.parseInt(params.get("pageSize"));
+        PageHelper.startPage(pageNum, pageSize);
+        // 查询问题列表
+        List<Map<String, Object>> questionListNolike = questionDao.getFollowQuestionListByUserId(params);
+        // 查询问题的点赞数
+        for (Map<String, Object> question : questionListNolike) {
+            String questionId = question.get("questionId").toString();
+            long answerLikeCount = likeService.findEntityLikeCount(1, questionId);
+            question.put("likeCount", answerLikeCount);
+            questionList.add(question);
+        }
+        PageInfo<Map<String, Object>> pageInfo = new PageInfo<Map<String, Object>>(questionList);
+
+        questionResultBean.setResult(questionList);
+        questionResultBean.setPageInfo(pageInfo);
+        return questionResultBean;
+    }
+
+
+    /**
      * 更新问题热度
      *
      * @return

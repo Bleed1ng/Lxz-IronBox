@@ -1,5 +1,6 @@
 package com.bleeding.ironbox.service.like;
 
+import com.bleeding.ironbox.dao.QuestionDao;
 import com.bleeding.ironbox.utils.RedisKeyUtil;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,8 @@ import javax.annotation.Resource;
 public class LikeServiceImpl implements ILikeService {
     @Resource
     private RedisTemplate redisTemplate;
+    @Resource
+    QuestionDao questionDao;
 
     // 点赞
     @Override
@@ -18,13 +21,16 @@ public class LikeServiceImpl implements ILikeService {
         boolean isMember = redisTemplate.opsForSet().isMember(entityLikeKey, userId);
         if (isMember) {
             redisTemplate.opsForSet().remove(entityLikeKey, userId);
+            if (entityType == 1) {
+                questionDao.deleteQuestionFollow(entityId, userId);
+            }
         } else {
             redisTemplate.opsForSet().add(entityLikeKey, userId);
+            if (entityType == 1) {
+                questionDao.insertQuestionFollow(entityId, userId);
+            }
         }
-        if (entityType == 1) {
-            String redisKey = RedisKeyUtil.getQuestionScoreKey();
-            redisTemplate.opsForSet().add(redisKey, entityId);
-        }
+
     }
 
     // 查询某实体点赞的数量
@@ -40,5 +46,7 @@ public class LikeServiceImpl implements ILikeService {
         String entityLikeKey = RedisKeyUtil.getEntityLikeKey(entityType, entityId);
         return redisTemplate.opsForSet().isMember(entityLikeKey, userId) ? 1 : 0;
     }
+
+
 
 }

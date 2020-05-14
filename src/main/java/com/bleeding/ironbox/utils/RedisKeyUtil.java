@@ -6,7 +6,12 @@ public class RedisKeyUtil {
     private static final String PREFIX_USER_LIKE = "like:user";
     private static final String PREFIX_QUESTION = "question";
 
-    // 某个实体的赞
+    /**
+     * 某个实体的赞
+     * @param entityType
+     * @param entityId
+     * @return
+     */
     // like:entity:entityType:entityId -> set(userId)
     public static String getEntityLikeKey(int entityType, String entityId) {
         return PREFIX_ENTITY_LIKE + SPLIT + entityType + SPLIT + entityId;

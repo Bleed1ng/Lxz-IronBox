@@ -3,7 +3,10 @@
 <mapper namespace="com.bleeding.ironbox.dao.UserDao">
     <!--  用户登录验证查询  -->
     <select id="selectUserByUserId" resultType="java.util.Map" parameterType="java.lang.String">
-		select userId, userName, password from tb_user where userId = #{userId}
+		select userId, userPhone, userEmail, userName, password from tb_user where userId = #{userId}
+	</select>
+    <select id="selectUserByUserEmail" resultType="java.util.Map" parameterType="java.lang.String">
+		select userId, userPhone, userEmail, userName, password from tb_user where userEmail = #{userEmail}
 	</select>
     <!--  查询用户列表  -->
     <select id="getUserList" resultType="java.util.Map" parameterType="java.util.Map">

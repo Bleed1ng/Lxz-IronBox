@@ -56,6 +56,21 @@
         GROUP BY
         q.questionId
     </select>
+    <!--  根据用户ID查询关注问题列表  -->
+    <select id="getFollowQuestionListByUserId" resultType="java.util.Map" parameterType="java.util.Map">
+        select q.*, COUNT(a.answerId) AS answerCount
+        from tb_question q
+        left join tb_answer a
+        on q.questionId = a.questionId
+        where q.questionId in (select questionId from tb_question_follow where userId = #{userId})
+        <if test="keyword neq null and keyword neq ''">
+            and concat(q.title, ifnull(q.userId, ''), ifnull(q.contents, ''))
+            like concat(concat('%', #{keyword}, '%'))
+        </if>
+        GROUP BY
+        q.questionId
+    </select>
+
     <!--  查询问题ID以及回答数量  -->
     <select id="getAnswerCount" resultType="java.util.Map" parameterType="java.util.Map">
         select tq.questionId, COUNT(ta.answerId) as answerCount
@@ -65,10 +80,12 @@
         where 1 = 1
         group by tq.questionId
     </select>
+
     <!--  更新问题热度  -->
     <update id="updateScore">
         update tb_question set questionScore = #{score} where questionId = #{questionId}
     </update>
+
     <!--  新增问题回答  -->
     <insert id="insertAnswer" parameterType="java.util.Map">
         insert tb_answer(answerId, questionId, userId, answerContents, answerTime)
@@ -77,5 +94,15 @@
     <!--  删除回答  -->
     <delete id="deleteAnswer" parameterType="java.lang.String">
     	delete from tb_answer where answerId = #{answerId}
+    </delete>
+
+    <!--  新增问题关注  -->
+    <insert id="insertQuestionFollow">
+        insert tb_question_follow(questionId, userId, follow_time)
+        value (#{questionId}, #{userId}, now())
+    </insert>
+    <!--  删除问题关注  -->
+    <delete id="deleteQuestionFollow">
+    	delete from tb_question_follow where questionId = #{questionId} and userId = #{userId}
     </delete>
 </mapper>

@@ -115,22 +115,24 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public UserResultBean login(Map<String, String> params) {
-        String userId = params.get("userId");
+        String userEmail = params.get("userEmail");
         String password = IronboxUtil.md5(params.get("password"));
         // 参数校验
-        if (StringUtils.isEmpty(userId)) {
+        if (StringUtils.isEmpty(userEmail)) {
             userResultBean.setSuccess(false);
-            userResultBean.setMsg("用户名[account]不能为空！");
+            userResultBean.setMsg("账号不能为空！");
             return userResultBean;
         }
         if (StringUtils.isEmpty(password)) {
             userResultBean.setSuccess(false);
-            userResultBean.setMsg("密码[password]不能为空！");
+            userResultBean.setMsg("密码不能为空！");
             return userResultBean;
         }
 
         // 根据用户名查询数据库用户记录
-        Map<String, Object> user = userDao.selectUserByUserId(userId);
+        // Map<String, Object> user = userDao.selectUserByUserId(userEmail);
+        // 根据用户名查询数据库用户记录
+        Map<String, Object> user = userDao.selectUserByUserEmail(userEmail);
 
         // 判断是否存在用户
         if (user == null) {

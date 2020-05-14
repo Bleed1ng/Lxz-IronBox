@@ -24,4 +24,6 @@ public interface IQuestionService {
     Integer updateScore();
 
     List<Map<String, Object>> getAnswerCount();
+
+    QuestionResultBean getFollowQuestionListByUserId(Map<String, String> params);
 }

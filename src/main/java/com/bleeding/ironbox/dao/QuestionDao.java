@@ -27,4 +27,10 @@ public interface QuestionDao {
     Integer updateScore(String questionId, double score);
 
     List<Map<String, Object>> getAnswerCount();
+
+    Integer insertQuestionFollow(String questionId, String userId);
+
+    Integer deleteQuestionFollow(String questionId, String userId);
+
+    List<Map<String, Object>> getFollowQuestionListByUserId(Map<String, String> params);
 }
